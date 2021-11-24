@@ -373,7 +373,8 @@ const rollDownAnimation = keyframes`
   }
 `
 export const AnimationContainer = styled.div`
-  margin-top: 10px;
+  padding-top: 10px;
+  height: calc(100% - 12px);
   animation: ${rollDownAnimation} 0.4s ease-in;
 `
 

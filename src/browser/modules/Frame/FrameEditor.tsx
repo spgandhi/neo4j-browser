@@ -84,20 +84,20 @@ type FrameEditorProps = FrameEditorBaseProps & {
 }
 
 function FrameEditor({
-  request,
-  isRelateAvailable,
+  // request,
+  // isRelateAvailable,
   codeFontLigatures,
   enableMultiStatementMode,
-  newFavorite,
-  newProjectFile,
-  cancelQuery,
+  // newFavorite,
+  // newProjectFile,
+  // cancelQuery,
   reRun,
   onTitlebarCmdClick,
   frame,
   fullscreenToggle,
-  numRecords,
-  getRecords,
-  visElement,
+  // numRecords,
+  // getRecords,
+  // visElement,
   bus,
   params
 }: FrameEditorProps) {
@@ -207,7 +207,10 @@ function FrameEditor({
     <StyledFrameEditorContainer ref={titleBarRef}>
       <Header>
         {renderEditor ? (
-          <EditorContainer onClick={onPreviewClick} data-testid="frameCommand">
+          <EditorContainer
+            // onClick={onPreviewClick}
+            data-testid="frameCommand"
+          >
             <Monaco
               history={history}
               useDb={frame.useDb}
@@ -227,7 +230,7 @@ function FrameEditor({
         ) : (
           <StyledFrameCommand
             selectedDb={frame.useDb}
-            onClick={onPreviewClick}
+            // onClick={onPreviewClick}
             data-testid="frameCommand"
             title={`${isMac ? 'Cmd' : 'Ctrl'}+click to copy to main editor`}
           >
@@ -236,7 +239,7 @@ function FrameEditor({
             </DottedLineHover>
           </StyledFrameCommand>
         )}
-        <EditorButton
+        {/* <EditorButton
           data-testid="rerunFrameButton"
           onClick={() =>
             request?.status === REQUEST_STATUS_PENDING
@@ -246,9 +249,9 @@ function FrameEditor({
           title="Rerun"
           icon={request?.status === REQUEST_STATUS_PENDING ? stopIcon : runIcon}
           width={16}
-        />
+        /> */}
       </Header>
-      <StyledFrameTitlebarButtonSection>
+      {/* <StyledFrameTitlebarButtonSection>
         <FrameButton
           title="Save as Favorite"
           dataTestId="frame-Favorite"
@@ -266,7 +269,7 @@ function FrameEditor({
           isRelateAvailable={isRelateAvailable}
           newProjectFile={newProjectFile}
         />
-      </StyledFrameTitlebarButtonSection>
+      </StyledFrameTitlebarButtonSection> */}
     </StyledFrameEditorContainer>
   )
 }

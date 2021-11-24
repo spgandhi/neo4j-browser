@@ -51,6 +51,8 @@ import {
 import { getScrollToTop } from 'shared/modules/settings/settingsDuck'
 import DbsFrame from './Auth/DbsFrame'
 import { upperFirst } from 'services/utils'
+import { filterCypherFrames } from '../Custom/helpers'
+import GetiingStartedHelp from '../Custom/GettingStartedHelp'
 
 const nameToFrame: Record<string, React.ComponentType<any>> = {
   error: ErrorFrame,
@@ -116,9 +118,15 @@ function Stream(props: StreamProps): JSX.Element {
     lastFrameCount.current = props.frames.length
   })
 
+  const cypherFrameObjects = filterCypherFrames(props.frames)
+
+  if (cypherFrameObjects.length === 0) {
+    return <GetiingStartedHelp />
+  }
+
   return (
     <StyledStream ref={base} data-testid="stream">
-      {props.frames.map(frameObject => {
+      {cypherFrameObjects.map(frameObject => {
         const frame = frameObject.stack[0]
 
         const frameProps: BaseFrameProps = {
@@ -144,7 +152,6 @@ function Stream(props: StreamProps): JSX.Element {
           </AnimationContainer>
         )
       })}
-      <Padding />
     </StyledStream>
   )
 }

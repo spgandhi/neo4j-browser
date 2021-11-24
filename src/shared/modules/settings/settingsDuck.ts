@@ -107,7 +107,7 @@ export const initialState = {
   shouldReportUdc: true,
   autoComplete: true,
   scrollToTop: true,
-  maxFrames: 15,
+  maxFrames: 1,
   codeFontLigatures: true,
   useBoltRouting: false,
   editorLint: false,

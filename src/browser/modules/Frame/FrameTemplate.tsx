@@ -98,7 +98,7 @@ function FrameTemplate({
       data-testid="frame"
       fullscreen={isFullscreen}
     >
-      {header && (
+      {/* {header && (
         <FrameTitlebar
           frame={header}
           fullscreen={isFullscreen}
@@ -108,7 +108,7 @@ function FrameTemplate({
           pinned={isPinned}
           togglePin={togglePin}
         />
-      )}
+      )} */}
 
       <ContentContainer>
         {header && (

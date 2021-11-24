@@ -319,7 +319,7 @@ export function MainEditor({
             width={16}
           />
         </Header>
-        {buttons.map(({ onClick, icon, title, testId }) => (
+        {/* {buttons.map(({ onClick, icon, title, testId }) => (
           <FrameButton
             key={`frame-${title}`}
             title={title}
@@ -328,7 +328,7 @@ export function MainEditor({
           >
             {icon}
           </FrameButton>
-        ))}
+        ))} */}
       </FlexContainer>
     </MainEditorWrapper>
   )

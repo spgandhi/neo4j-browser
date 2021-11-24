@@ -59,7 +59,7 @@ const Main = React.memo(function Main(props: any) {
       <ErrorBoundary>
         <Editor />
       </ErrorBoundary>
-      {props.showUdcConsentBanner && (
+      {/* {props.showUdcConsentBanner && (
         <UdcConsentBanner>
           <span>
             To help make Neo4j Browser better we collect information on product
@@ -71,7 +71,7 @@ const Main = React.memo(function Main(props: any) {
           </span>
           <DismissConsentBanner onClick={props.dismissConsentBanner} />
         </UdcConsentBanner>
-      )}
+      )} */}
       {dbIsUnavailable && (
         <ErrorBanner>
           Database '{useDb}' is unavailable. Run{' '}
@@ -83,7 +83,7 @@ const Main = React.memo(function Main(props: any) {
           {props.errorMessage}
         </ErrorBanner>
       )}
-      {props.connectionState === DISCONNECTED_STATE && (
+      {/* {props.connectionState === DISCONNECTED_STATE && (
         <NotAuthedBanner data-testid="disconnectedBanner">
           Database access not available. Please use&nbsp;
           <AutoExecButton
@@ -92,7 +92,7 @@ const Main = React.memo(function Main(props: any) {
           />
           &nbsp; to establish connection. There's a graph waiting for you.
         </NotAuthedBanner>
-      )}
+      )} */}
       {props.connectionState === PENDING_STATE && !past10Sec && (
         <WarningBanner data-testid="reconnectBanner">
           Connection to server lost. Reconnecting...

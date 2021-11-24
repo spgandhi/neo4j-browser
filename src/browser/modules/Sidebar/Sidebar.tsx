@@ -55,6 +55,7 @@ import {
 } from 'browser-components/icons/Icons'
 import { getCurrentDraft } from 'shared/modules/sidebar/sidebarDuck'
 import { DrawerHeader } from 'browser-components/drawer/drawer-styled'
+import QuickActions from '../Custom/QuickActions'
 
 interface SidebarProps {
   openDrawer: string
@@ -68,8 +69,8 @@ interface SidebarProps {
 }
 
 const Sidebar = ({
-  openDrawer,
-  onNavClick,
+  // openDrawer,
+  // onNavClick,
   neo4jConnectionState,
   showStaticScripts,
   syncConnected,
@@ -174,14 +175,8 @@ const Sidebar = ({
     }
   ].filter(({ name }) => loadSync || name !== 'Sync')
 
-  return (
-    <TabNavigation
-      openDrawer={openDrawer}
-      onNavClick={onNavClick}
-      topNavItems={topNavItemsList}
-      bottomNavItems={bottomNavItemsList}
-    />
-  )
+  const updateQuery = () => {}
+  return <QuickActions onQueryUpdate={updateQuery} />
 }
 
 const mapStateToProps = (state: GlobalState) => {

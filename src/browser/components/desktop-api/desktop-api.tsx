@@ -29,7 +29,6 @@ function DesktopApi({
 }: any) {
   const getKerberosTicket =
     (integrationPoint && integrationPoint.getKerberosTicket) || undefined
-
   if (
     setEventMetricsCallback &&
     integrationPoint &&

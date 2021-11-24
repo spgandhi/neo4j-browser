@@ -24,6 +24,7 @@ import { dim } from 'browser-styles/constants'
 type FullscreenProps = { fullscreen: boolean }
 export const StyledFrame = styled.article<FullscreenProps>`
   width: auto;
+  height: 100%;
   background-color: ${props => props.theme.frameBackground};
   border: ${props => props.theme.frameBorder};
 
@@ -52,15 +53,6 @@ export const StyledFrameBody = styled.div<
   flex: 1;
   overflow: ${props => (props.preventOverflow ? 'hidden' : 'auto')};
   min-height: ${dim.frameBodyHeight / 2}px;
-  max-height: ${props => {
-    if (props.collapsed) {
-      return 0
-    }
-    if (props.fullscreen) {
-      return '100%'
-    }
-    return dim.frameBodyHeight - dim.frameStatusbarHeight + 1 + 'px'
-  }};
   display: ${props => (props.collapsed ? 'none' : 'flex')};
   flex-direction: row;
   width: 100%;
@@ -103,10 +95,6 @@ export const StyledFrameContents = styled.div<FullscreenProps>`
   font-size: 14px;
   overflow: auto;
   min-height: ${dim.frameBodyHeight / 2}px;
-  max-height: ${props =>
-    props.fullscreen
-      ? '100vh'
-      : dim.frameBodyHeight - dim.frameStatusbarHeight * 2 + 'px'};
   ${props => (props.fullscreen ? 'height: 100vh' : null)};
   flex: auto;
   display: flex;
@@ -193,6 +181,7 @@ export const StyledFrameCommand = styled.label<{ selectedDb: string | null }>`
 `
 
 export const ContentContainer = styled.div`
+  height: 100%;
   margin: 0px 3px;
   padding: 2px 2px 0 2px;
   display: flex;

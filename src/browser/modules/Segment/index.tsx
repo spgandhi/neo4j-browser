@@ -28,6 +28,7 @@ import {
   getDesktopTrackingId,
   updateUdcData
 } from 'shared/modules/udc/udcDuck'
+import mixpanel from 'mixpanel-browser'
 
 export interface MetricsProperties {
   [key: string]: string | number | Date | boolean
@@ -38,6 +39,10 @@ export interface MetricsData {
   label: string
   data: MetricsProperties
 }
+
+// ======================================================
+/* Note: This component has been customized to Mixpanel instead of Segment */
+// ======================================================
 
 export class Segment extends Component<any> {
   componentDidMount() {
@@ -51,87 +56,30 @@ export class Segment extends Component<any> {
       children, // eslint-disable-line
       ...otherProps
     } = this.props
-    if (!segmentKey || !canUseDOM()) {
+
+    if (!canUseDOM()) {
       return
     }
-    if (!(window as any).analytics) {
-      ;(function(window: any, document: Document, segmentKey: string, a?: any) {
-        const analytics = (window.analytics = window.analytics || [])
-        if (!analytics.initialize) {
-          if (analytics.invoked) {
-            window.console &&
-              console.error &&
-              console.error('Segment snippet included twice.')
-          } else {
-            analytics.invoked = !0
-            analytics.methods = [
-              'trackSubmit',
-              'trackClick',
-              'trackLink',
-              'trackForm',
-              'pageview',
-              'identify',
-              'reset',
-              'group',
-              'track',
-              'ready',
-              'alias',
-              'debug',
-              'page',
-              'once',
-              'off',
-              'on',
-              'addSourceMiddleware',
-              'addIntegrationMiddleware',
-              'setAnonymousId',
-              'addDestinationMiddleware'
-            ]
-            analytics.factory = function(t: any) {
-              return function() {
-                const e = Array.prototype.slice.call(arguments)
-                e.unshift(t)
-                analytics.push(e)
-                return analytics
-              }
-            }
-            for (let t = 0; t < analytics.methods.length; t++) {
-              const e = analytics.methods[t]
-              analytics[e] = analytics.factory(e)
-            }
-            analytics.load = function(t: any, e: any) {
-              const n = document.createElement('script')
-              n.type = 'text/javascript'
-              n.async = !0
-              n.src =
-                'https://cdn.segment.com/analytics.js/v1/' +
-                t +
-                '/analytics.min.js'
-              a = document.getElementsByTagName('script')[0]
-              a.parentNode.insertBefore(n, a)
-              analytics._loadOptions = e
-            }
-            analytics._writeKey = segmentKey
-            analytics.SNIPPET_VERSION = '4.13.2'
-            analytics.load(segmentKey)
-            const doTrack = (metricsData: MetricsData) => {
-              const { category, label, data } = metricsData
-              window.analytics.track(category + '-' + label, {
-                ...data,
-                desktop: inDesktop
-              })
-            }
 
-            if (auraNtId) {
-              window.analytics.identify(auraNtId)
-            } else if (inDesktop && desktopTrackingId) {
-              window.analytics.identify(desktopTrackingId)
-            }
+    // if prod-URL then use 'prod-token' else 'dev-token'
+    const MIXPANEL_TOKEN =
+      window.location.href.indexOf('test-drive.neo4j.com') > -1
+        ? '4bfb2414ab973c741b6f067bf06d5575'
+        : 'ef1696f0a9c88563894dcba2019a9bef'
 
-            setTrackCallback(doTrack)
-          }
+    mixpanel.init(MIXPANEL_TOKEN, { debug: true })
+
+    const doTrack = (metricsData: MetricsData) => {
+      const { category, label, data } = metricsData
+      mixpanel.track(
+        'TEST_DRIVE_' + category.toUpperCase() + '_' + label.toUpperCase(),
+        {
+          ...data
         }
-      })(window, document, segmentKey)
+      )
     }
+
+    setTrackCallback(doTrack)
     updateData({ ...otherProps, segmentKey: segmentKey })
   }
 

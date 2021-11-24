@@ -2248,6 +2248,11 @@
   resolved "https://neo.jfrog.io/neo/api/npm/npm/@types/minimatch/-/minimatch-3.0.3.tgz#3dca0e3f33b200fc7d1139c0cd96c1268cadfd9d"
   integrity sha1-PcoOPzOyAPx9ETnAzZbBJoyt/Z0=
 
+"@types/mixpanel-browser@^2.35.7":
+  version "2.35.7"
+  resolved "https://neo.jfrog.io/neo/api/npm/npm/@types/mixpanel-browser/-/mixpanel-browser-2.35.7.tgz#9ff36890cf069ab557d556a945c2cd47906c13db"
+  integrity sha1-n/NokM8GmrVX1VapRcLNR5BsE9s=
+
 "@types/node@*":
   version "14.11.1"
   resolved "https://neo.jfrog.io/neo/api/npm/npm/@types/node/-/node-14.11.1.tgz#56af902ad157e763f9ba63d671c39cda3193c835"
@@ -9156,6 +9161,11 @@ mixin-deep@^1.2.0:
   dependencies:
     for-in "^1.0.2"
     is-extendable "^1.0.1"
+
+mixpanel-browser@^2.41.0:
+  version "2.41.0"
+  resolved "https://neo.jfrog.io/neo/api/npm/npm/mixpanel-browser/-/mixpanel-browser-2.41.0.tgz#d49753b4e4a7e6ddd18c126be4a917fff4ce3039"
+  integrity sha1-1JdTtOSn5t3RjBJr5KkX//TOMDk=
 
 mkdirp@0.x, mkdirp@^0.5.1, mkdirp@^0.5.3, mkdirp@^0.5.5:
   version "0.5.5"

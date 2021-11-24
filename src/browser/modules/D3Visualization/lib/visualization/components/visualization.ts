@@ -34,7 +34,9 @@ const vizFn = function(
   const viz: any = { style }
 
   const root = d3.select(el)
-  const baseGroup = root.append('g').attr('transform', 'translate(0,0)')
+  const baseGroup = root
+    .append('g')
+    .attr('transform', 'translate(0,0)scale(.75,.75)')
   const rect = baseGroup
     .append('rect')
     .style('fill', 'none')

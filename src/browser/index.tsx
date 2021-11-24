@@ -20,7 +20,8 @@
 import './init'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import AppInit, { setupSentry } from './AppInit'
+// import AppInit, { setupSentry } from './AppInit'
+import AppWrapper from './modules/Custom/AppWrapper'
 
-setupSentry()
-ReactDOM.render(<AppInit />, document.getElementById('mount'))
+// setupSentry()
+ReactDOM.render(<AppWrapper />, document.getElementById('mount'))
