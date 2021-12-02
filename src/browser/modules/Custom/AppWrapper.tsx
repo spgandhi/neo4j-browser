@@ -95,7 +95,8 @@ const OverlayElement = ({ children }: any) => (
       position: 'absolute',
       borderRadius: 8,
       zIndex: 99999,
-      height: '100vh'
+      height: '100vh',
+      width: '100%'
     }}
   >
     <img
