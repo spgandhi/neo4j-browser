@@ -7,10 +7,11 @@ import { connect } from 'react-redux'
 import * as editor from 'shared/modules/editor/editorDuck'
 import { CSSProperties } from 'styled-components'
 import AuraBanner from './AuraBanner'
+import { trackEvent } from './helpers'
 
 interface IProps {
   onQueryUpdate: any
-  onItemClick: (cmd: string) => void
+  processQuery: (cmd: string) => void
   customActiveConnection: any
 }
 
@@ -35,24 +36,27 @@ const styles = {
     lineHeight: 1.7
   },
   container: {
-    padding: '10px',
     paddingRight: 0,
     height: '100%',
     background: 'rgb(227 237 245)',
     width: '33%',
     minWidth: '360px',
-    maxWidth: '360px'
+    maxWidth: '360px',
+    display: 'flex',
+    flexDirection: 'column'
   },
   innerContainer: {
     background: 'white',
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
-    borderRadius: 2,
-    position: 'relative'
+    position: 'relative',
+    overflow: 'auto',
+    flexGrow: 1
   },
   cta: {
-    marginTop: '.5rem'
+    marginTop: '.5rem',
+    fontSize: 14
   },
   ctaInner: {
     display: 'inline-flex',
@@ -64,7 +68,30 @@ const styles = {
   }
 } as IStyles
 
+const sampleQueries = [
+  {
+    id: '0',
+    text: 'Finding who directed Cloud Atlas movie',
+    query:
+      "MATCH (m:Movie {title: 'Cloud Atlas'})<-[d:DIRECTED]-(p:Person)\nreturn p, d"
+  },
+  {
+    id: '1',
+    text: 'Finding all people who have co-acted with Tom Hanks in any movie',
+    query: `MATCH (tom:Person {name: "Tom Hanks"})-[a:ACTED_IN]->(m:Movie)<-[aa:ACTED_IN]-(p:Person)\nreturn p, a, aa, m, tom`
+  },
+  {
+    id: '2',
+    text: 'Finding all people related to the movie Cloud Atlas in any way',
+    query: `MATCH (p:Person)-[relatedTo]-(m:Movie {title: "Cloud Atlas"})\nreturn p, m, relatedTo`
+  }
+]
+
 const QuickActions = (props: IProps) => {
+  const handleQueryClick = (query: string, properties: any = {}) => {
+    trackEvent('SAMPLE_QUERY_CLICK', properties)
+    props.processQuery(query)
+  }
   return (
     <div style={styles.container}>
       <div style={styles.innerContainer}>
@@ -80,80 +107,44 @@ const QuickActions = (props: IProps) => {
           }}
         >
           <div>
-            <div style={{ ...styles.item, paddingTop: '1rem' }}>
-              <h5 style={{ marginBottom: '2rem' }}>Sample Queries</h5>
-              <div>Finding who directed Cloud Atlas movie</div>
-              <div style={styles.cta}>
-                <a
-                  style={styles.ctaInner}
-                  href="#"
-                  onClick={() =>
-                    props.onItemClick(
-                      "MATCH (m:Movie {title: 'Cloud Atlas'})<-[d:DIRECTED]-(p:Person)\nreturn p, d"
-                    )
-                  }
-                >
-                  <span style={styles.ctaIcon}>
-                    <PlayIconCircle
-                      color={theme.colors.primary.DEFAULT}
-                      size={14}
-                    />
-                  </span>{' '}
-                  <span className="inline-flex items-center">Run query</span>
-                </a>
-              </div>
-            </div>
-            <div style={styles.item}>
-              <div>
-                Finding all people who have co-acted with Tom Hanks in any movie
-              </div>
-              <div style={styles.cta}>
-                <a
-                  style={styles.ctaInner}
-                  href="#"
-                  onClick={() =>
-                    props.onItemClick(
-                      'MATCH (tom:Person {name: "Tom Hanks"})-[a:ACTED_IN]->(m:Movie)<-[aa:ACTED_IN]-(p:Person)\nreturn p, a, aa, m, tom'
-                    )
-                  }
-                >
-                  <span style={styles.ctaIcon}>
-                    <PlayIconCircle
-                      color={theme.colors.primary.DEFAULT}
-                      size={14}
-                    />
-                  </span>
-                  <span className="inline-flex items-center">Run query</span>
-                </a>
-              </div>
-            </div>
-            <div style={styles.item}>
-              <div>
-                Finding all people related to the movie Cloud Atlas in any way
-              </div>
-              <div style={styles.cta}>
-                <a
-                  style={styles.ctaInner}
-                  href="#"
-                  onClick={() =>
-                    props.onItemClick(
-                      'MATCH (p:Person)-[relatedTo]-(m:Movie {title: "Cloud Atlas"})\nreturn p, m, relatedTo'
-                    )
-                  }
-                >
-                  <span style={styles.ctaIcon}>
-                    <PlayIconCircle
-                      color={theme.colors.primary.DEFAULT}
-                      size={14}
-                    />
-                  </span>
-                  <span className="inline-flex items-center">Run query</span>
-                </a>
-              </div>
+            <div>
+              <h5
+                style={{
+                  marginBottom: '1rem',
+                  ...styles.item,
+                  paddingBottom: 0
+                }}
+              >
+                Sample Queries
+              </h5>
+              {sampleQueries.map(({ text, query }: any, index: number) => (
+                <div key={index} style={{ ...styles.item, paddingTop: '1rem' }}>
+                  <div style={{ fontSize: 14 }}>{text}</div>
+                  <div style={styles.cta}>
+                    <a
+                      style={styles.ctaInner}
+                      href="#"
+                      onClick={() =>
+                        handleQueryClick(query, { queryListIndex: index })
+                      }
+                    >
+                      <span style={styles.ctaIcon}>
+                        <PlayIconCircle
+                          color={theme.colors.primary.DEFAULT}
+                          size={14}
+                        />
+                      </span>{' '}
+                      <span className="inline-flex items-center">
+                        Run query
+                      </span>
+                    </a>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
           <div
-            style={{ padding: '.75rem 1.5rem', fontSize: 14, lineHeight: 1.7 }}
+            style={{ padding: '.75rem 1.5rem', fontSize: 13, lineHeight: 1.7 }}
           >
             <span>
               Connected to the{' '}
@@ -168,15 +159,15 @@ const QuickActions = (props: IProps) => {
             </span>
           </div>
         </div>
-        <AuraBanner />
       </div>
+      <AuraBanner />
     </div>
   )
 }
 
 const mapDispatchToProps = (_dispatch: any, ownProps: any) => {
   return {
-    onItemClick: (cmd: string) => {
+    processQuery: (cmd: string) => {
       ownProps.bus.send(editor.SET_CONTENT, editor.setContent(cmd))
     }
   }

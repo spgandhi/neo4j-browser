@@ -4,6 +4,7 @@ import { withBus } from 'react-suber'
 import { getRequests } from 'shared/modules/requests/requestsDuck'
 import theme from './theme'
 import mixpanel from 'mixpanel-browser'
+import { trackEvent } from './helpers'
 
 function AuraBanner(props: any) {
   const [shouldShowBanner, setShowBanner] = useState(false)
@@ -32,7 +33,7 @@ function AuraBanner(props: any) {
   }, [props.queryRequests])
 
   const handleCtaClick = () => {
-    mixpanel.track('TEST_DRIVE_CLICK', { label: 'Start free on aura' })
+    trackEvent('AURA_CTA_CLICK', { label: 'Start free on aura' })
   }
 
   let ctaUrl = `https://console.neo4j.io/?ref=test-drive`
@@ -45,16 +46,13 @@ function AuraBanner(props: any) {
         background: theme.colors.primary[50],
         color: 'white',
         margin: 'auto',
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
         padding: '36px 24px',
+        position: shouldShowBanner ? 'relative' : 'absolute',
         transform: shouldShowBanner ? 'translateY(0)' : 'translateY(100%)',
         opacity: shouldShowBanner ? 1 : 0,
         transition: '1s all',
         zIndex: 99,
-        borderRadius: '0 0 4px 4px'
+        borderRadius: '4px'
       }}
     >
       <div
@@ -67,10 +65,19 @@ function AuraBanner(props: any) {
         }}
       >
         <div>
-          <h3>You are doing great! Next Step?</h3>
-          <p className="text-subtitle">
-            Continue learning and building with Neo4j with a persistent database
-            and a detailed guide
+          <h3>You are doing great! </h3>
+          <p
+            style={{
+              fontWeight: 'bold',
+              fontSize: 14,
+              paddingBottom: '.25rem'
+            }}
+          >
+            Next Step?
+          </p>
+          <p style={{ fontSize: 15 }}>
+            Continue learning and building with Neo4j with a persistent FREE
+            forever database and sample dataset.
           </p>
         </div>
         <div>
@@ -80,7 +87,8 @@ function AuraBanner(props: any) {
             style={{
               background: 'white',
               padding: '12px 18px',
-              borderRadius: 4
+              borderRadius: 4,
+              fontWeight: 'bold'
             }}
             href={ctaUrl}
             target="_blank"

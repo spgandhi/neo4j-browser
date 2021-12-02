@@ -204,7 +204,7 @@ function FrameEditor({
   const history = (frame.history || []).slice(1)
 
   return (
-    <StyledFrameEditorContainer ref={titleBarRef}>
+    <StyledFrameEditorContainer ref={titleBarRef} className="font-fira-code">
       <Header>
         {renderEditor ? (
           <EditorContainer

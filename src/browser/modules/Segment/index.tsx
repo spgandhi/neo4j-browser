@@ -29,6 +29,7 @@ import {
   updateUdcData
 } from 'shared/modules/udc/udcDuck'
 import mixpanel from 'mixpanel-browser'
+import { trackEvent } from '../Custom/helpers'
 
 export interface MetricsProperties {
   [key: string]: string | number | Date | boolean
@@ -61,22 +62,9 @@ export class Segment extends Component<any> {
       return
     }
 
-    // if prod-URL then use 'prod-token' else 'dev-token'
-    const MIXPANEL_TOKEN =
-      window.location.href.indexOf('test-drive.neo4j.com') > -1
-        ? '4bfb2414ab973c741b6f067bf06d5575'
-        : 'ef1696f0a9c88563894dcba2019a9bef'
-
-    mixpanel.init(MIXPANEL_TOKEN, { debug: true })
-
     const doTrack = (metricsData: MetricsData) => {
       const { category, label, data } = metricsData
-      mixpanel.track(
-        'TEST_DRIVE_' + category.toUpperCase() + '_' + label.toUpperCase(),
-        {
-          ...data
-        }
-      )
+      trackEvent(category + '_' + label, data)
     }
 
     setTrackCallback(doTrack)

@@ -52,10 +52,17 @@ import {
   StyledHelpFrame,
   ErrorText
 } from '../styled'
+import { trackEvent } from 'browser/modules/Custom/helpers'
 
 export class ErrorsView extends Component<any> {
   shouldComponentUpdate(props: any) {
     return !deepEquals(props.result, this.props.result)
+  }
+
+  componentDidMount() {
+    trackEvent('ERROR_FRAME', {
+      message: this.props.result.message
+    })
   }
 
   render() {
