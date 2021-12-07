@@ -71,18 +71,18 @@ const styles = {
 const sampleQueries = [
   {
     id: '0',
-    text: 'Finding who directed Cloud Atlas movie',
+    text: 'Find people who directed Cloud Atlas movie',
     query:
-      "MATCH (m:Movie {title: 'Cloud Atlas'})<-[d:DIRECTED]-(p:Person)\nreturn p, d"
+      "MATCH (m:Movie {title: 'Cloud Atlas'})<-[d:DIRECTED]-(p:Person)\nreturn m, d, p"
   },
   {
     id: '1',
-    text: 'Finding all people who have co-acted with Tom Hanks in any movie',
-    query: `MATCH (tom:Person {name: "Tom Hanks"})-[a:ACTED_IN]->(m:Movie)<-[aa:ACTED_IN]-(p:Person)\nreturn p, a, aa, m, tom`
+    text: 'Find people who have co-acted with Tom Hanks in any movie',
+    query: `MATCH (tom:Person {name: "Tom Hanks"})-[a:ACTED_IN]->(m:Movie)<-[rel:ACTED_IN]-(p:Person)\nreturn p, a, rel, m, tom`
   },
   {
     id: '2',
-    text: 'Finding all people related to the movie Cloud Atlas in any way',
+    text: 'Find all people related to the movie Cloud Atlas in any way',
     query: `MATCH (p:Person)-[relatedTo]-(m:Movie {title: "Cloud Atlas"})\nreturn p, m, relatedTo`
   }
 ]

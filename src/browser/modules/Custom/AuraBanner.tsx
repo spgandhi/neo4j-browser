@@ -47,7 +47,7 @@ function AuraBanner(props: any) {
         color: 'white',
         margin: 'auto',
         padding: '36px 24px',
-        position: shouldShowBanner ? 'relative' : 'absolute',
+        position: shouldShowBanner ? 'relative' : 'fixed',
         bottom: 0,
         transform: shouldShowBanner ? 'translateY(0)' : 'translateY(100%)',
         opacity: shouldShowBanner ? 1 : 0,
