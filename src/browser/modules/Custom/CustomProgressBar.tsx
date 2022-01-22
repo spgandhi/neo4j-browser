@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Progress } from 'semantic-ui-react'
 
-class ActionLoading extends Component<any, any> {
+class CustomProgressBar extends Component<any, any> {
   public loadingStep: any
   public timerSteps: number[]
 
@@ -59,4 +59,4 @@ class ActionLoading extends Component<any, any> {
   }
 }
 
-export default ActionLoading
+export default CustomProgressBar

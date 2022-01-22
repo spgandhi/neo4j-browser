@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Suspense } from 'react'
 import theme from './theme'
 import mixpanel from 'mixpanel-browser'
@@ -27,9 +27,9 @@ const AppWrapper = () => {
   const [isLoadingBrowserApp, setIsLoadingBrowserApp] = useState(false)
   const [AsyncMainComponent, setAsyncMainComponent] = useState<any>(null)
 
-  const onShowMain = () => {
+  const onShowMain = ({ isAuto = false }) => {
     setIsLoadingBrowserApp(true)
-    trackEvent('INIT_ATTEMPT')
+    if (!isAuto) trackEvent('INIT_ATTEMPT')
     handleAppImport()
   }
 
@@ -46,13 +46,17 @@ const AppWrapper = () => {
   }
 
   useEffect(() => {
+    if (window.location.href.indexOf('auto-start=1') > -1) {
+      onShowMain({ isAuto: true })
+    }
+
     // if prod-URL then use 'prod-token' else 'dev-token'
     const MIXPANEL_TOKEN =
       window.location.href.indexOf('test-drive.neo4j.com') > -1
         ? '4bfb2414ab973c741b6f067bf06d5575'
         : 'ef1696f0a9c88563894dcba2019a9bef'
 
-    mixpanel.init(MIXPANEL_TOKEN, { debug: true })
+    mixpanel.init(MIXPANEL_TOKEN, { debug: false })
   }, [])
 
   return (
@@ -70,7 +74,7 @@ const AppWrapper = () => {
                 color: 'white',
                 fontWeight: 'bold'
               }}
-              onClick={onShowMain}
+              onClick={() => onShowMain({ isAuto: false })}
             >
               Start Playground
             </button>
@@ -89,7 +93,7 @@ const AppWrapper = () => {
   )
 }
 
-const OverlayElement = ({ children }: any) => (
+export const OverlayElement = ({ children }: any) => (
   <div
     style={{
       position: 'absolute',

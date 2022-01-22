@@ -8,11 +8,18 @@ import * as editor from 'shared/modules/editor/editorDuck'
 import { CSSProperties } from 'styled-components'
 import AuraBanner from './AuraBanner'
 import { trackEvent } from './helpers'
+import { GlobalState } from 'shared/globalState'
+import {
+  getActiveConnection,
+  getActiveConnectionData
+} from 'shared/modules/connections/connectionsDuck'
+import demoDBConnectionSettings from './demoDBConnectionSettings'
 
 interface IProps {
   onQueryUpdate: any
   processQuery: (cmd: string) => void
-  customActiveConnection: any
+  activeConnection: any
+  activeConnectionName: any
 }
 
 type IStyles = {
@@ -68,35 +75,22 @@ const styles = {
   }
 } as IStyles
 
-const sampleQueries = [
-  {
-    id: '0',
-    text: 'Find people who directed Cloud Atlas movie',
-    query:
-      "MATCH (m:Movie {title: 'Cloud Atlas'})<-[d:DIRECTED]-(p:Person)\nreturn m, d, p"
-  },
-  {
-    id: '1',
-    text: 'Find people who have co-acted with Tom Hanks in any movie',
-    query: `MATCH (tom:Person {name: "Tom Hanks"})-[a:ACTED_IN]->(m:Movie)<-[rel:ACTED_IN]-(p:Person)\nreturn p, a, rel, m, tom`
-  },
-  {
-    id: '2',
-    text: 'Find all people related to the movie Cloud Atlas in any way',
-    query: `MATCH (p:Person)-[relatedTo]-(m:Movie {title: "Cloud Atlas"})\nreturn p, m, relatedTo`
-  }
-]
-
 const QuickActions = (props: IProps) => {
   const handleQueryClick = (query: string, properties: any = {}) => {
     trackEvent('SAMPLE_QUERY_CLICK', properties)
     props.processQuery(query)
   }
+  const activeConnectionIndex = demoDBConnectionSettings.findIndex(
+    db => db.id === props.activeConnectionName
+  )
+  const db = demoDBConnectionSettings[activeConnectionIndex]
+
+  if (!db) return null
   return (
     <div style={styles.container}>
       <div style={styles.innerContainer}>
         <div style={{ flex: 0 }}>
-          <h3 style={styles.h5}>Movies Database</h3>
+          <h3 style={styles.h5}>{db.title} Database</h3>
         </div>
         <div
           style={{
@@ -117,7 +111,7 @@ const QuickActions = (props: IProps) => {
               >
                 Sample Queries
               </h5>
-              {sampleQueries.map(({ text, query }: any, index: number) => (
+              {db.queries.map(({ text, query }: any, index: number) => (
                 <div key={index} style={{ ...styles.item, paddingTop: '1rem' }}>
                   <div style={{ fontSize: 14 }}>{text}</div>
                   <div style={styles.cta}>
@@ -149,7 +143,7 @@ const QuickActions = (props: IProps) => {
             <span>
               Connected to the{' '}
               <strong>
-                <em>movies</em>
+                <em>{db.dbName}</em>
               </strong>{' '}
               database with <strong>read-only</strong> access
             </span>
@@ -173,4 +167,13 @@ const mapDispatchToProps = (_dispatch: any, ownProps: any) => {
   }
 }
 
-export default withBus(connect(null, mapDispatchToProps)(QuickActions))
+const mapStateToProps = (state: GlobalState) => {
+  return {
+    activeConnection: getActiveConnectionData(state),
+    activeConnectionName: getActiveConnection(state)
+  }
+}
+
+export default withBus(
+  connect(mapStateToProps, mapDispatchToProps)(QuickActions)
+)
