@@ -37,11 +37,9 @@ const AppWrapper = () => {
     import('../../AppInit').then(module => {
       trackEvent('INIT_SUCCESS')
       setAsyncMainComponent(module.default)
-      console.log('init complete', Date.now())
       setTimeout(() => {
         setShouldShowOverlay(false)
-        console.log('running timeout', Date.now())
-      }, 10000)
+      }, 5000)
     })
   }
 
@@ -98,7 +96,7 @@ export const OverlayElement = ({ children }: any) => (
     style={{
       position: 'absolute',
       borderRadius: 8,
-      zIndex: 99999,
+      zIndex: 999999,
       height: '100vh',
       width: '100%'
     }}

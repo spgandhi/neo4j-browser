@@ -6,6 +6,7 @@ import {
   CONNECT,
   setActiveConnection
 } from 'shared/modules/connections/connectionsDuck'
+import { getRequests } from 'shared/modules/requests/requestsDuck'
 import { OverlayElement } from './AppWrapper'
 import CustomProgressBar from './CustomProgressBar'
 import demoDBConnectionSettings from './demoDBConnectionSettings'
@@ -29,31 +30,31 @@ interface IProps {
   setActiveConnection: Function
   executeSystemCommand: any
   bus: any
+  queryRequests: any
 }
 
 const AuthWrapper = (props: IProps) => {
+  const { queryRequests } = props
   const [isCredentialing, setIsCredentialing] = useState(true)
 
-  const handleDBConnect = (
-    details: any,
-    initialCommand: string,
-    onDone?: Function
-  ) => {
+  const handleDBConnect = (details: any, initialCommand: string) => {
     setIsCredentialing(true)
     trackEvent('CONNECT_TO_DB', {
       id: details.id
     })
     props.bus.self(CONNECT, details, (res: any) => {
+      trackEvent('CONNECT_TO_DB_SUCCESS', {
+        id: details.id,
+        ...res
+      })
+
+      props.setActiveConnection(details.id)
+      props.executeSystemCommand(initialCommand)
+
+      // Allow max 20 secs for initial command to execute before showing the screen
       setTimeout(() => {
-        setIsCredentialing(false)
-        trackEvent('CONNECT_TO_DB_SUCCESS', {
-          id: details.id,
-          ...res
-        })
-        props.setActiveConnection(details.id)
-        onDone && onDone()
-        props.executeSystemCommand(initialCommand)
-      }, 2000)
+        if (!isCredentialing) setIsCredentialing(true)
+      }, 20 * 1000)
     })
   }
 
@@ -67,6 +68,7 @@ const AuthWrapper = (props: IProps) => {
 
     handleTask()
 
+    // Listen for message to change connection to another DB
     window.addEventListener('message', (event: any) => {
       const allowedMessages = demoDBConnectionSettings.map(db => db.id)
       if (allowedMessages.indexOf(event.data) > -1) {
@@ -77,6 +79,13 @@ const AuthWrapper = (props: IProps) => {
       }
     })
   }, [])
+
+  useEffect(() => {
+    const queries = Object.keys(queryRequests).map(key => queryRequests[key])
+    if (queries && queries.length > 0) {
+      if (queries[0].status !== 'pending') setIsCredentialing(false)
+    }
+  }, [queryRequests])
 
   if (isCredentialing) {
     return (
@@ -98,4 +107,12 @@ const mapDispatchToProps = (dispatch: any) => {
   }
 }
 
-export default withBus(connect(null, mapDispatchToProps)(AuthWrapper))
+const mapStateToProps = (state: any) => {
+  return {
+    queryRequests: getRequests(state)
+  }
+}
+
+export default withBus(
+  connect(mapStateToProps, mapDispatchToProps)(AuthWrapper)
+)

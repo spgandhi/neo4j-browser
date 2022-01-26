@@ -122,46 +122,48 @@ export const setClientConfig = (isAvailable: any) => {
   }
 }
 
-export const featuresDiscoveryEpic = (action$: any, store: any) => {
-  return action$
-    .ofType(CONNECTION_SUCCESS)
-    .mergeMap(() => {
-      return new Promise(async (resolve, reject) => {
-        try {
-          const supportsMultiDb = await bolt.hasMultiDbSupport()
-          const res = await bolt.routedReadTransaction(
-            'CALL dbms.procedures YIELD name',
-            {},
-            {
-              useDb: supportsMultiDb ? SYSTEM_DB : '',
-              useCypherThread: shouldUseCypherThread(store.getState()),
-              ...getBackgroundTxMetadata({
-                hasServerSupport: canSendTxMetadata(store.getState())
-              })
-            }
-          )
-          resolve(res)
-        } catch (e) {
-          reject(e)
-        }
-      })
-        .then((res: any) => {
-          store.dispatch(
-            updateFeatures(res.records.map((record: any) => record.get('name')))
-          )
-          store.dispatch(
-            updateUserCapability(USER_CAPABILITIES.proceduresReadable, true)
-          )
-          return Rx.Observable.of(null)
-        })
-        .catch(() => {
-          store.dispatch(
-            updateUserCapability(USER_CAPABILITIES.proceduresReadable, false)
-          )
-          return Rx.Observable.of(null)
-        })
-    })
-    .mapTo({ type: FEATURE_DETECTION_DONE })
+export const featuresDiscoveryEpic = (action$: any) => {
+  return (
+    action$
+      .ofType(CONNECTION_SUCCESS)
+      // .mergeMap(() => {
+      //   return new Promise(async (resolve, reject) => {
+      //     try {
+      //       const supportsMultiDb = await bolt.hasMultiDbSupport()
+      //       const res = await bolt.routedReadTransaction(
+      //         'CALL dbms.procedures YIELD name',
+      //         {},
+      //         {
+      //           useDb: supportsMultiDb ? SYSTEM_DB : '',
+      //           useCypherThread: shouldUseCypherThread(store.getState()),
+      //           ...getBackgroundTxMetadata({
+      //             hasServerSupport: canSendTxMetadata(store.getState())
+      //           })
+      //         }
+      //       )
+      //       resolve(res)
+      //     } catch (e) {
+      //       reject(e)
+      //     }
+      //   })
+      // .then((res: any) => {
+      //   store.dispatch(
+      //     updateFeatures(res.records.map((record: any) => record.get('name')))
+      //   )
+      //   store.dispatch(
+      //     updateUserCapability(USER_CAPABILITIES.proceduresReadable, true)
+      //   )
+      //   return Rx.Observable.of(null)
+      // })
+      // .catch(() => {
+      //   store.dispatch(
+      //     updateUserCapability(USER_CAPABILITIES.proceduresReadable, false)
+      //   )
+      //   return Rx.Observable.of(null)
+      // })
+      // })
+      .mapTo({ type: FEATURE_DETECTION_DONE })
+  )
 }
 
 export const clearOnDisconnectEpic = (some$: any) =>

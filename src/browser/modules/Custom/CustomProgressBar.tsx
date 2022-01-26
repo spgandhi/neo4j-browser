@@ -4,6 +4,7 @@ import { Progress } from 'semantic-ui-react'
 class CustomProgressBar extends Component<any, any> {
   public loadingStep: any
   public timerSteps: number[]
+  public timer: any
 
   constructor(props: any) {
     super(props)
@@ -14,17 +15,22 @@ class CustomProgressBar extends Component<any, any> {
       now: 10, // out of 100
       text: defaultText
     }
+    this.timer = null
     this.loadingStep = loadingStep
     this.timerSteps = timerSteps
     this.updateProgress = this.updateProgress.bind(this)
   }
 
   componentDidMount() {
-    this.inititateProgress(this.timerSteps[0], 0)
+    this.inititateProgress()
   }
 
-  inititateProgress(timer: any, index: any) {
-    setTimeout(() => this.updateProgress(index), timer)
+  componentWillUnmount() {
+    clearTimeout(this.timer)
+  }
+
+  inititateProgress() {
+    this.updateProgress(0)
   }
 
   updateProgress(index: number) {
@@ -35,7 +41,10 @@ class CustomProgressBar extends Component<any, any> {
         ? this.props.data.loadingStepText[index]
         : this.props.data.defaultText
     })
-    setTimeout(() => this.updateProgress(index + 1), this.timerSteps[index + 1])
+    this.timer = setTimeout(
+      () => this.updateProgress(index + 1),
+      this.timerSteps[index + 1]
+    )
   }
 
   render() {
