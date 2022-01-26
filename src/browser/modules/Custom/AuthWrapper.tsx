@@ -44,14 +44,16 @@ const AuthWrapper = (props: IProps) => {
       id: details.id
     })
     props.bus.self(CONNECT, details, (res: any) => {
-      setIsCredentialing(false)
-      trackEvent('CONNECT_TO_DB_SUCCESS', {
-        id: details.id,
-        ...res
-      })
-      props.setActiveConnection(details.id)
-      onDone && onDone()
-      props.executeSystemCommand(initialCommand)
+      setTimeout(() => {
+        setIsCredentialing(false)
+        trackEvent('CONNECT_TO_DB_SUCCESS', {
+          id: details.id,
+          ...res
+        })
+        props.setActiveConnection(details.id)
+        onDone && onDone()
+        props.executeSystemCommand(initialCommand)
+      }, 2000)
     })
   }
 

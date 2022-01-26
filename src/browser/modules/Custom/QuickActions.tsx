@@ -90,7 +90,29 @@ const QuickActions = (props: IProps) => {
     <div style={styles.container}>
       <div style={styles.innerContainer}>
         <div style={{ flex: 0 }}>
-          <h3 style={styles.h5}>{db.title} Database</h3>
+          <h3 style={styles.h5}>
+            {db.title} Database
+            <div
+              style={{
+                paddingTop: '4px',
+                fontSize: 13,
+                lineHeight: 1.7,
+                fontWeight: 'normal'
+                // color: ''
+              }}
+            >
+              <span>
+                Connected with <strong>read-only</strong> access
+              </span>
+              <span className="inline-flex items-center">
+                {' '}
+                <CheckIconCircle
+                  size={12}
+                  color={theme.colors.success.DEFAULT}
+                />
+              </span>
+            </div>
+          </h3>
         </div>
         <div
           style={{
@@ -136,21 +158,6 @@ const QuickActions = (props: IProps) => {
                 </div>
               ))}
             </div>
-          </div>
-          <div
-            style={{ padding: '.75rem 1.5rem', fontSize: 13, lineHeight: 1.7 }}
-          >
-            <span>
-              Connected to the{' '}
-              <strong>
-                <em>{db.dbName}</em>
-              </strong>{' '}
-              database with <strong>read-only</strong> access
-            </span>
-            <span className="inline-flex items-center">
-              {' '}
-              <CheckIconCircle size={12} color={theme.colors.success.DEFAULT} />
-            </span>
           </div>
         </div>
       </div>
