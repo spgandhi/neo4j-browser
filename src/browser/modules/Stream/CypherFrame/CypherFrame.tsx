@@ -375,7 +375,13 @@ export class CypherFrame extends Component<CypherFrameProps, CypherFrameState> {
             }
           />
         </Display>
-        <Display if={this.state.openView === viewTypes.TABLE} lazy>
+        <Display
+          if={
+            this.state.openView === viewTypes.TABLE ||
+            this.state.openView === viewTypes.VISUALIZATION
+          }
+          lazy
+        >
           <RelatableStatusbar
             updated={this.props.request.updated}
             result={result}
@@ -421,11 +427,9 @@ export class CypherFrame extends Component<CypherFrameProps, CypherFrameState> {
       ) : (
         this.getFrameContents(request, result, query)
       )
+
     const statusBar =
-      this.state.openView !== viewTypes.VISUALIZATION &&
-      requestStatus !== 'error'
-        ? this.getStatusbar(result)
-        : null
+      requestStatus !== 'error' ? this.getStatusbar(result) : null
 
     return (
       <FrameTemplate

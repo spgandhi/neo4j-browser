@@ -72,7 +72,7 @@ export function getBodyAndStatusBarMessages(result: any, maxRows: any) {
   const resultAvailableAfter =
     result.summary.resultAvailableAfter.toNumber() === 0
       ? 'in less than 1'
-      : `after ${result.summary.resultAvailableAfter.toString()}`
+      : `in ${result.summary.resultAvailableAfter.toString()}`
   const totalTime = result.summary.resultAvailableAfter.add(
     result.summary.resultConsumedAfter
   )
@@ -88,7 +88,7 @@ export function getBodyAndStatusBarMessages(result: any, maxRows: any) {
   let updateMessages = bolt.retrieveFormattedUpdateStatistics(result)
   let streamMessage =
     result.records.length > 0
-      ? `started streaming ${result.records.length} records ${resultAvailableAfter} ms and completed ${totalTimeString} ${streamMessageTail}`
+      ? `Returned records ${resultAvailableAfter} ms`
       : `completed ${totalTimeString} ${streamMessageTail}`
 
   if (updateMessages && updateMessages.length > 0) {

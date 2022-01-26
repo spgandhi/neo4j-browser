@@ -15,7 +15,7 @@ type Connection = {
 }
 
 const moviesDatabase: Connection = {
-  title: 'Movies Database',
+  title: 'Movies',
   id: 'movies',
   connectionDetails: {
     host: 'bolt+s://6b4fbb179a11540e48b4e77537bc07c9.neo4jsandbox.com:7687',
