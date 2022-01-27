@@ -7,7 +7,7 @@ import { connect } from 'react-redux'
 import * as editor from 'shared/modules/editor/editorDuck'
 import { CSSProperties } from 'styled-components'
 import AuraBanner from './AuraBanner'
-import { trackEvent } from './helpers'
+import { generateQueryWithComment, trackEvent } from './helpers'
 import { GlobalState } from 'shared/globalState'
 import {
   getActiveConnection,
@@ -76,9 +76,13 @@ const styles = {
 } as IStyles
 
 const QuickActions = (props: IProps) => {
-  const handleQueryClick = (query: string, properties: any = {}) => {
+  const handleQueryClick = (
+    query: string,
+    comment = '',
+    properties: any = {}
+  ) => {
     trackEvent('SAMPLE_QUERY_CLICK', properties)
-    props.processQuery(query)
+    props.processQuery(generateQueryWithComment(query, comment))
   }
   const activeConnectionIndex = demoDBConnectionSettings.findIndex(
     db => db.id === props.activeConnectionName
@@ -141,7 +145,7 @@ const QuickActions = (props: IProps) => {
                       style={styles.ctaInner}
                       href="#"
                       onClick={() =>
-                        handleQueryClick(query, { queryListIndex: index })
+                        handleQueryClick(query, text, { queryListIndex: index })
                       }
                     >
                       <span style={styles.ctaIcon}>

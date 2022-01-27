@@ -1,3 +1,4 @@
+import { ConsoleErrorListener } from 'antlr4/error/ErrorListener'
 import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
 import { withBus } from 'react-suber'
@@ -10,7 +11,7 @@ import { getRequests } from 'shared/modules/requests/requestsDuck'
 import { OverlayElement } from './AppWrapper'
 import CustomProgressBar from './CustomProgressBar'
 import demoDBConnectionSettings from './demoDBConnectionSettings'
-import { trackEvent } from './helpers'
+import { generateQueryWithComment, trackEvent } from './helpers'
 
 const loadingData = {
   loadingStep: [10, 20, 30, 60, 80],
@@ -36,33 +37,45 @@ interface IProps {
 const AuthWrapper = (props: IProps) => {
   const { queryRequests } = props
   const [isCredentialing, setIsCredentialing] = useState(true)
+  const [firstQueryMode, setFirstQueryMode] = useState(false)
 
   const handleDBConnect = (details: any, initialCommand: string) => {
     setIsCredentialing(true)
     trackEvent('CONNECT_TO_DB', {
       id: details.id
     })
+    setFirstQueryMode(true)
     props.bus.self(CONNECT, details, (res: any) => {
       trackEvent('CONNECT_TO_DB_SUCCESS', {
         id: details.id,
         ...res
       })
-
       props.setActiveConnection(details.id)
+      props.executeSystemCommand(':clear')
       props.executeSystemCommand(initialCommand)
 
       // Allow max 20 secs for initial command to execute before showing the screen
       setTimeout(() => {
-        if (!isCredentialing) setIsCredentialing(true)
+        if (!isCredentialing) {
+          readyForDisplay()
+        }
       }, 20 * 1000)
     })
+  }
+
+  const readyForDisplay = () => {
+    setIsCredentialing(false)
+    setFirstQueryMode(false)
   }
 
   useEffect(() => {
     const handleTask = async () => {
       handleDBConnect(
         demoDBConnectionSettings[0].connectionDetails,
-        demoDBConnectionSettings[0].queries[0].query
+        generateQueryWithComment(
+          demoDBConnectionSettings[0].queries[0].query,
+          demoDBConnectionSettings[0].queries[0].text
+        )
       )
     }
 
@@ -81,9 +94,12 @@ const AuthWrapper = (props: IProps) => {
   }, [])
 
   useEffect(() => {
-    const queries = Object.keys(queryRequests).map(key => queryRequests[key])
-    if (queries && queries.length > 0) {
-      if (queries[0].status !== 'pending') setIsCredentialing(false)
+    if (firstQueryMode && Object.keys(queryRequests).length > 0) {
+      const isActiveQuery = Object.keys(queryRequests).some(key => {
+        const request = queryRequests[key]
+        return request.status === 'pending'
+      })
+      if (!isActiveQuery) readyForDisplay()
     }
   }, [queryRequests])
 

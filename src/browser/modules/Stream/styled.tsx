@@ -41,10 +41,12 @@ export const PaddedDiv = styled.div`
 
 export const DottedLineHover = styled.span`
   cursor: pointer;
+  display: inline-block;
+  border-bottom: 1px transparent;
   &:hover {
     cursor: pointer;
     border-bottom: 1px dotted #b6adad;
-    padding-bottom: 2px;
+    padding-bottom: 0px;
   }
   text-overflow: ellipsis;
 `

@@ -317,7 +317,7 @@ class Monaco extends React.Component<MonacoProps, MonacoState> {
       cursorStyle: 'block',
       fontFamily: '"Fira Code", Monaco, "Courier New", Terminal, monospace',
       fontLigatures: this.props.fontLigatures,
-      fontSize: 17,
+      fontSize: 14,
       fontWeight: '400',
       hideCursorInOverviewRuler: true,
       language: 'cypher',

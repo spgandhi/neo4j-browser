@@ -60,6 +60,7 @@ import {
   shouldEnableMultiStatementMode
 } from 'shared/modules/settings/settingsDuck'
 import { getParams } from 'shared/modules/params/paramsDuck'
+import theme from '../Custom/theme'
 
 type FrameEditorBaseProps = {
   frame: Frame
@@ -81,6 +82,23 @@ type FrameEditorProps = FrameEditorBaseProps & {
   cancelQuery: (requestId: string) => void
   reRun: (obj: Frame, cmd: string) => void
   onTitlebarCmdClick: (cmd: string) => void
+}
+
+const getEditorValue = (editorValue: string) => {
+  console.log(editorValue.substring(0, 2))
+  if (editorValue.substring(0, 2) === '//') {
+    const split = editorValue.split('\n')
+    const commentLine = split[0]
+    const query = split.slice(1).join('\n')
+    return (
+      <span style={{ display: 'inline-flex', flexDirection: 'column' }}>
+        <span style={{ color: theme.colors.neutral[50] }}>{commentLine}</span>
+        <span>{query}</span>
+      </span>
+    )
+  } else {
+    return editorValue.split('\n').join(' ')
+  }
 }
 
 function FrameEditor({
@@ -144,9 +162,10 @@ function FrameEditor({
   function onPreviewClick(e: React.MouseEvent) {
     if (e.ctrlKey || e.metaKey) {
       onTitlebarCmdClick(editorValue)
-    } else {
-      setRenderEditor(true)
     }
+    // else {
+    // setRenderEditor(true)
+    // }
   }
 
   const titleBarRef = useRef<HTMLDivElement>(null)
@@ -207,10 +226,7 @@ function FrameEditor({
     <StyledFrameEditorContainer ref={titleBarRef} className="font-fira-code">
       <Header>
         {renderEditor ? (
-          <EditorContainer
-            // onClick={onPreviewClick}
-            data-testid="frameCommand"
-          >
+          <EditorContainer onClick={onPreviewClick} data-testid="frameCommand">
             <Monaco
               history={history}
               useDb={frame.useDb}
@@ -230,13 +246,11 @@ function FrameEditor({
         ) : (
           <StyledFrameCommand
             selectedDb={frame.useDb}
-            // onClick={onPreviewClick}
+            onClick={onPreviewClick}
             data-testid="frameCommand"
             title={`${isMac ? 'Cmd' : 'Ctrl'}+click to copy to main editor`}
           >
-            <DottedLineHover>
-              {editorValue.split('\n').join(' ')}
-            </DottedLineHover>
+            <DottedLineHover>{getEditorValue(editorValue)}</DottedLineHover>
           </StyledFrameCommand>
         )}
         {/* <EditorButton

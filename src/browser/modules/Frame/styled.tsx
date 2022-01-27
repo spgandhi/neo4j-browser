@@ -20,6 +20,8 @@
 
 import styled from 'styled-components'
 import { dim } from 'browser-styles/constants'
+import theme from 'browser/modules/Custom/theme'
+import { DARK_THEME } from 'shared/modules/settings/settingsDuck'
 
 type FullscreenProps = { fullscreen: boolean }
 export const StyledFrame = styled.article<FullscreenProps>`
@@ -158,12 +160,17 @@ export const StyledFrameEditorContainer = styled.div`
 
 export const StyledFrameCommand = styled.label<{ selectedDb: string | null }>`
   font-family: ${props => props.theme.editorFont};
-  color: ${props => props.theme.secondaryButtonText};
+  color: ${props =>
+    props.theme.name === DARK_THEME
+      ? theme.colors.neutral[30]
+      : theme.colors.neutral[75]};
+    theme.colors.neutral[30] /* props => props.theme.secondaryButtonText */
+  } ;
   background-color: ${props => props.theme.editorBackground};
   border-radius: 2px;
   padding-left: 6px;
-  font-size: 17px;
-  line-height: 1.8em;
+  font-size: 14px;
+  line-height: 1.5em;
   margin: 4px 0px 4px 4px;
   flex: 1 1 auto;
   min-width: 0;
