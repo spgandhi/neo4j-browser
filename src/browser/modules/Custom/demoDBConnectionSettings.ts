@@ -18,10 +18,10 @@ const moviesDatabase: Connection = {
   title: 'Movies',
   id: 'movies',
   connectionDetails: {
-    host: 'bolt+s://6b4fbb179a11540e48b4e77537bc07c9.neo4jsandbox.com:7687',
+    host: 'bolt+s://c437b9da33285ed02894f9390788a862.neo4jsandbox.com:7687',
     id: 'movies',
     username: 'neo4j',
-    password: 'car-passage-tills'
+    password: 'tents-fours-stream'
   },
   queries: [
     {
@@ -47,10 +47,10 @@ const crimeInvestigation: Connection = {
   title: 'Crime Investigation',
   id: 'crime',
   connectionDetails: {
-    host: 'bolt+s://d81ef4d4927024a3c8001bcc97b7a8e7.neo4jsandbox.com:7687',
+    host: 'bolt+s://e93bc828a65698de09eea6f20fb911f0.neo4jsandbox.com:7687',
     id: 'crime',
     username: 'neo4j',
-    password: 'teams-bays-ingredients'
+    password: 'boils-hydrometers-slides'
   },
   queries: [
     {
@@ -83,10 +83,10 @@ const openStreetMap: Connection = {
   title: 'Open Street Map',
   id: 'open-street-map',
   connectionDetails: {
-    host: 'bolt+s://bacd1c08b07979b20f4dd978c615e54b.neo4jsandbox.com:7687',
+    host: 'bolt+s://972d99373e323be89e28bb0273fdeddb.neo4jsandbox.com:7687',
     id: 'open-street-map',
     username: 'neo4j',
-    password: 'air-fuels-cups'
+    password: 'polishers-tanks-thicknesses'
   },
   queries: [
     {
@@ -101,10 +101,10 @@ const ContactTracing: Connection = {
   title: 'Contact Tracing',
   id: 'contact-tracing',
   connectionDetails: {
-    host: 'bolt+s://1d06b62ce9bc4734735e6cd0e573cae6.neo4jsandbox.com:7687',
+    host: 'bolt+s://d75f6f02cc1b25e85a2b02e2e30d630f.neo4jsandbox.com:7687',
     id: 'contact-tracing',
     username: 'neo4j',
-    password: 'jug-strain-eves'
+    password: 'sewage-thousands-tugs'
   },
   queries: [
     {
@@ -119,10 +119,10 @@ const StackOverflow: Connection = {
   title: 'Stack Overflow',
   id: 'stack-overflow',
   connectionDetails: {
-    host: 'bolt+s://bcc26d9974116d4aaef4dbbc6392e402.neo4jsandbox.com:7687',
+    host: 'bolt+s://56dbcbbbee60c82b4d1719aabbc999be.neo4jsandbox.com:7687',
     id: 'open-street-map',
     username: 'neo4j',
-    password: 'pints-circuitry-professionalism'
+    password: 'massed-surprise-sum'
   },
   queries: [
     {
