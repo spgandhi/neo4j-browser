@@ -572,12 +572,12 @@ export const dbMetaEpic = (some$: any, store: any) =>
           // Throw away newly initiated calls until done
           .throttle(() => some$.ofType(DB_META_DONE))
           // Server version and edition
-          // .do(store.dispatch({ type: FETCH_SERVER_INFO }))
+          .do(store.dispatch({ type: FETCH_SERVER_INFO }))
           .mergeMap(() => {
             return Rx.Observable.forkJoin([
               // getLabelsAndTypes(store),
               // clusterRole(store),
-              // databaseList(store)
+              databaseList(store)
             ])
           })
           .takeUntil(
