@@ -85,7 +85,6 @@ type FrameEditorProps = FrameEditorBaseProps & {
 }
 
 const getEditorValue = (editorValue: string) => {
-  console.log(editorValue.substring(0, 2))
   if (editorValue.substring(0, 2) === '//') {
     const split = editorValue.split('\n')
     const commentLine = split[0]

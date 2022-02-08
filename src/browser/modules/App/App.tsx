@@ -262,6 +262,7 @@ export function App(props: any) {
               <StyledBody>
                 <ErrorBoundary>
                   <QuickActions />
+                  {/* <Sidebar openDrawer={drawer} onNavClick={handleNavClick} /> */}
                 </ErrorBoundary>
                 <StyledMainWrapper id={MAIN_WRAPPER_DOM_ID}>
                   <Main
