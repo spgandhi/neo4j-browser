@@ -51,7 +51,7 @@
     "wait-on-devs": "wait-on -c ./build_scripts/wait-on-config.js https-get://localhost:8080",
     "wait-on-neo4j": "wait-on -c ./build_scripts/wait-on-config.js http-get://localhost:7474",
     "wait-on-neo4js": "wait-on -c ./build_scripts/wait-on-config.js https-get://localhost:7473",
-    "aws-deploy": "aws s3 sync ./dist s3://test-drive.neo4j.com --acl public-read --profile web",
+    "aws-deploy": "yarn build && aws s3 sync ./dist s3://test-drive.neo4j.com --acl public-read --profile web",
     "aws-invalidation": "aws cloudfront create-invalidation --distribution-id E2ZABBC661VQGN --paths '/*'"
   },
   "lint-staged": {

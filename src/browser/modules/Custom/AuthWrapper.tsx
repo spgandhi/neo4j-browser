@@ -1,21 +1,29 @@
-import { ConsoleErrorListener } from 'antlr4/error/ErrorListener'
 import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
 import { withBus } from 'react-suber'
-import { executeSystemCommand } from 'shared/modules/commands/commandsDuck'
+import { GlobalState } from 'shared/globalState'
+import {
+  executeCommand,
+  executeSystemCommand
+} from 'shared/modules/commands/commandsDuck'
 import {
   CONNECT,
+  getUseDb,
   setActiveConnection
 } from 'shared/modules/connections/connectionsDuck'
+import {
+  getRemoteContentHostnameAllowlist,
+  isServerConfigDone
+} from 'shared/modules/dbMeta/dbMetaDuck'
 import { getRequests } from 'shared/modules/requests/requestsDuck'
 import { OverlayElement } from './AppWrapper'
 import CustomProgressBar from './CustomProgressBar'
-import demoDBConnectionSettings from './demoDBConnectionSettings'
+import dbSettings, { DatabaseItem } from './demoDBConnectionSettings'
 import { generateQueryWithComment, trackEvent } from './helpers'
 
 const loadingData = {
   loadingStep: [10, 20, 30, 60, 80],
-  timerSteps: [0, 2000, 4000, 6000, 8000],
+  timerSteps: [0, 3000, 3000, 4000, 5000],
   loadingStepText: [
     'Switching database',
     'Checking server configuration',
@@ -30,17 +38,37 @@ interface IProps {
   children: React.ReactNode
   setActiveConnection: Function
   executeSystemCommand: any
+  executeCommand: any
   bus: any
   queryRequests: any
+  isServerConfigDone: boolean
+  activeDb: string | null
 }
 
 const AuthWrapper = (props: IProps) => {
-  const { queryRequests } = props
+  const { queryRequests, isServerConfigDone, activeDb } = props
   const [isCredentialing, setIsCredentialing] = useState(true)
   const [firstQueryMode, setFirstQueryMode] = useState(false)
 
-  const handleDBConnect = (details: any, initialCommand: string) => {
+  // Step 1: Connect to the database
+  useEffect(() => {
     setIsCredentialing(true)
+
+    handleDBConnect(dbSettings.DBCredentials)
+
+    // Listen for message to change connection to another DB
+    window.addEventListener('message', (event: any) => {
+      const allowedMessages = dbSettings.allowedDatabases.map(db => db.id)
+      if (allowedMessages.indexOf(event.data) > -1) {
+        const db = dbSettings.allowedDatabases.find(db => db.id === event.data)
+        if (!db) return
+        setIsCredentialing(true)
+        handleUseDb(db)
+      }
+    })
+  }, [])
+
+  const handleDBConnect = (details: any) => {
     trackEvent('CONNECT_TO_DB', {
       id: details.id
     })
@@ -50,9 +78,8 @@ const AuthWrapper = (props: IProps) => {
         id: details.id,
         ...res
       })
+
       props.setActiveConnection(details.id)
-      props.executeSystemCommand(':clear')
-      props.executeSystemCommand(initialCommand)
 
       // Allow max 20 secs for initial command to execute before showing the screen
       setTimeout(() => {
@@ -63,35 +90,48 @@ const AuthWrapper = (props: IProps) => {
     })
   }
 
+  // Step 2: When serverConfig is done, set active DB
+
+  const handleUseDb = (dbDetails: DatabaseItem) => {
+    props.executeCommand(`:use ${dbDetails.id}`)
+  }
+
+  useEffect(() => {
+    if (isServerConfigDone) {
+      handleUseDb(dbSettings.allowedDatabases[0])
+    }
+  }, [isServerConfigDone])
+
+  // Step 3: When activeDB is set, run the initial query
+
+  const executeIitialQuery = (dbDetails: DatabaseItem) => {
+    setFirstQueryMode(true)
+    props.executeCommand(':clear')
+    props.executeCommand(
+      generateQueryWithComment(
+        dbDetails.queries[0].query,
+        dbDetails.queries[0].text
+      )
+    )
+  }
+
+  useEffect(() => {
+    if (activeDb) {
+      const dbDetails = dbSettings.allowedDatabases.find(
+        db => db.id === activeDb
+      )
+      if (dbDetails) {
+        executeIitialQuery(dbDetails)
+      }
+    }
+  }, [activeDb])
+
+  // Step 4: When initial query is done, show the screen
+
   const readyForDisplay = () => {
     setIsCredentialing(false)
     setFirstQueryMode(false)
   }
-
-  useEffect(() => {
-    const handleTask = async () => {
-      handleDBConnect(
-        demoDBConnectionSettings[0].connectionDetails,
-        generateQueryWithComment(
-          demoDBConnectionSettings[0].queries[0].query,
-          demoDBConnectionSettings[0].queries[0].text
-        )
-      )
-    }
-
-    handleTask()
-
-    // Listen for message to change connection to another DB
-    window.addEventListener('message', (event: any) => {
-      const allowedMessages = demoDBConnectionSettings.map(db => db.id)
-      if (allowedMessages.indexOf(event.data) > -1) {
-        const db = demoDBConnectionSettings.find(db => db.id === event.data)
-        if (!db) return
-        props.executeSystemCommand(':server disconnect')
-        handleDBConnect(db.connectionDetails, db.queries[0].query)
-      }
-    })
-  }, [])
 
   useEffect(() => {
     if (firstQueryMode && Object.keys(queryRequests).length > 0) {
@@ -99,7 +139,9 @@ const AuthWrapper = (props: IProps) => {
         const request = queryRequests[key]
         return request.status === 'pending'
       })
-      if (!isActiveQuery) readyForDisplay()
+      if (!isActiveQuery) {
+        readyForDisplay()
+      }
     }
   }, [queryRequests])
 
@@ -119,13 +161,16 @@ const AuthWrapper = (props: IProps) => {
 const mapDispatchToProps = (dispatch: any) => {
   return {
     setActiveConnection: (id: any) => dispatch(setActiveConnection(id)),
-    executeSystemCommand: (cmd: string) => dispatch(executeSystemCommand(cmd))
+    executeSystemCommand: (cmd: string) => dispatch(executeSystemCommand(cmd)),
+    executeCommand: (cmd: string) => dispatch(executeCommand(cmd))
   }
 }
 
-const mapStateToProps = (state: any) => {
+const mapStateToProps = (state: GlobalState) => {
   return {
-    queryRequests: getRequests(state)
+    queryRequests: getRequests(state),
+    isServerConfigDone: isServerConfigDone(state),
+    activeDb: getUseDb(state)
   }
 }
 

@@ -596,117 +596,117 @@ export const serverConfigEpic = (some$: any, store: any) =>
   some$
     .ofType(FEATURE_DETECTION_DONE)
     .merge(some$.ofType(DB_META_DONE))
-    // .mergeMap(() => {
-    //   // Server configuration
-    //   return Rx.Observable.fromPromise(
-    //     new Promise(async (resolve, reject) => {
-    //       let supportsMultiDb: boolean
-    //       try {
-    //         supportsMultiDb = await bolt.hasMultiDbSupport()
-    //       } catch (e) {
-    //         // if hasMultiDbSupport throws there's no instance of neo4j running anymore
-    //         onLostConnection(store.dispatch)(e)
-    //         return reject(e)
-    //       }
+    .mergeMap(() => {
+      // Server configuration
+      return Rx.Observable.fromPromise(
+        new Promise(async (resolve, reject) => {
+          let supportsMultiDb: boolean
+          try {
+            supportsMultiDb = await bolt.hasMultiDbSupport()
+          } catch (e) {
+            // if hasMultiDbSupport throws there's no instance of neo4j running anymore
+            onLostConnection(store.dispatch)(e)
+            return reject(e)
+          }
 
-    //       bolt
-    //         .directTransaction(
-    //           `CALL ${
-    //             hasClientConfig(store.getState()) !== false
-    //               ? 'dbms.clientConfig()'
-    //               : 'dbms.listConfig()'
-    //           }`,
-    //           {},
-    //           {
-    //             useDb: supportsMultiDb ? SYSTEM_DB : '',
-    //             useCypherThread: shouldUseCypherThread(store.getState()),
-    //             ...getBackgroundTxMetadata({
-    //               hasServerSupport: canSendTxMetadata(store.getState())
-    //             })
-    //           }
-    //         )
-    //         .then((r: any) => {
-    //           // This is not set yet
-    //           if (hasClientConfig(store.getState()) === null) {
-    //             store.dispatch(setClientConfig(true))
-    //           }
-    //           resolve(r)
-    //         })
-    //         .catch((e: any) => {
-    //           // Try older procedure if the new one doesn't exist
-    //           if (e.code === 'Neo.ClientError.Procedure.ProcedureNotFound') {
-    //             // Store that dbms.clientConfig isn't available
-    //             store.dispatch(setClientConfig(false))
+          bolt
+            .directTransaction(
+              `CALL ${
+                hasClientConfig(store.getState()) !== false
+                  ? 'dbms.clientConfig()'
+                  : 'dbms.listConfig()'
+              }`,
+              {},
+              {
+                useDb: supportsMultiDb ? SYSTEM_DB : '',
+                useCypherThread: shouldUseCypherThread(store.getState()),
+                ...getBackgroundTxMetadata({
+                  hasServerSupport: canSendTxMetadata(store.getState())
+                })
+              }
+            )
+            .then((r: any) => {
+              // This is not set yet
+              if (hasClientConfig(store.getState()) === null) {
+                store.dispatch(setClientConfig(true))
+              }
+              resolve(r)
+            })
+            .catch((e: any) => {
+              // Try older procedure if the new one doesn't exist
+              if (e.code === 'Neo.ClientError.Procedure.ProcedureNotFound') {
+                // Store that dbms.clientConfig isn't available
+                store.dispatch(setClientConfig(false))
 
-    //             bolt
-    //               .directTransaction(
-    //                 `CALL dbms.listConfig()`,
-    //                 {},
-    //                 {
-    //                   useDb: supportsMultiDb ? SYSTEM_DB : '',
-    //                   useCypherThread: shouldUseCypherThread(store.getState()),
-    //                   ...getBackgroundTxMetadata({
-    //                     hasServerSupport: canSendTxMetadata(store.getState())
-    //                   })
-    //                 }
-    //               )
-    //               .then(resolve)
-    //               .catch(reject)
-    //           } else {
-    //             reject(e)
-    //           }
-    //         })
-    //     })
-    //   )
-    //     .catch(() => {
-    //       store.dispatch(
-    //         updateUserCapability(USER_CAPABILITIES.serverConfigReadable, false)
-    //       )
-    //       return Rx.Observable.of(null)
-    //     })
-    //     .do((res: any) => {
-    //       if (!res) return Rx.Observable.of(null)
-    //       const settings = res.records.reduce((all: any, record: any) => {
-    //         const name = record.get('name')
-    //         let value = record.get('value')
-    //         if (name === 'browser.retain_connection_credentials') {
-    //           let retainCredentials = true
-    //           // Check if we should wipe user creds from localstorage
-    //           if (typeof value !== 'undefined' && isConfigValFalsy(value)) {
-    //             retainCredentials = false
-    //           }
-    //           store.dispatch(setRetainCredentials(retainCredentials))
-    //           value = retainCredentials
-    //         } else if (name === 'browser.retain_editor_history') {
-    //           let retainHistory = true
-    //           // Check if we should wipe user history from localstorage
-    //           if (typeof value !== 'undefined' && isConfigValFalsy(value)) {
-    //             retainHistory = false
-    //           }
-    //           value = retainHistory
-    //         } else if (name === 'browser.allow_outgoing_connections') {
-    //           // Use isConfigValFalsy to cast undefined to true
-    //           value = !isConfigValFalsy(value)
-    //         } else if (name === 'clients.allow_telemetry') {
-    //           value = !isConfigValFalsy(value)
-    //         } else if (name === 'dbms.security.auth_enabled') {
-    //           let authEnabled = true
-    //           if (typeof value !== 'undefined' && isConfigValFalsy(value)) {
-    //             authEnabled = false
-    //           }
-    //           value = authEnabled
-    //           store.dispatch(setAuthEnabled(authEnabled))
-    //         }
-    //         all[name] = value
-    //         return all
-    //       }, {})
-    //       store.dispatch(
-    //         updateUserCapability(USER_CAPABILITIES.serverConfigReadable, true)
-    //       )
-    //       store.dispatch(updateSettings(settings))
-    //       return Rx.Observable.of(null)
-    //     })
-    // })
+                bolt
+                  .directTransaction(
+                    `CALL dbms.listConfig()`,
+                    {},
+                    {
+                      useDb: supportsMultiDb ? SYSTEM_DB : '',
+                      useCypherThread: shouldUseCypherThread(store.getState()),
+                      ...getBackgroundTxMetadata({
+                        hasServerSupport: canSendTxMetadata(store.getState())
+                      })
+                    }
+                  )
+                  .then(resolve)
+                  .catch(reject)
+              } else {
+                reject(e)
+              }
+            })
+        })
+      )
+        .catch(() => {
+          store.dispatch(
+            updateUserCapability(USER_CAPABILITIES.serverConfigReadable, false)
+          )
+          return Rx.Observable.of(null)
+        })
+        .do((res: any) => {
+          if (!res) return Rx.Observable.of(null)
+          const settings = res.records.reduce((all: any, record: any) => {
+            const name = record.get('name')
+            let value = record.get('value')
+            if (name === 'browser.retain_connection_credentials') {
+              let retainCredentials = true
+              // Check if we should wipe user creds from localstorage
+              if (typeof value !== 'undefined' && isConfigValFalsy(value)) {
+                retainCredentials = false
+              }
+              store.dispatch(setRetainCredentials(retainCredentials))
+              value = retainCredentials
+            } else if (name === 'browser.retain_editor_history') {
+              let retainHistory = true
+              // Check if we should wipe user history from localstorage
+              if (typeof value !== 'undefined' && isConfigValFalsy(value)) {
+                retainHistory = false
+              }
+              value = retainHistory
+            } else if (name === 'browser.allow_outgoing_connections') {
+              // Use isConfigValFalsy to cast undefined to true
+              value = !isConfigValFalsy(value)
+            } else if (name === 'clients.allow_telemetry') {
+              value = !isConfigValFalsy(value)
+            } else if (name === 'dbms.security.auth_enabled') {
+              let authEnabled = true
+              if (typeof value !== 'undefined' && isConfigValFalsy(value)) {
+                authEnabled = false
+              }
+              value = authEnabled
+              store.dispatch(setAuthEnabled(authEnabled))
+            }
+            all[name] = value
+            return all
+          }, {})
+          store.dispatch(
+            updateUserCapability(USER_CAPABILITIES.serverConfigReadable, true)
+          )
+          store.dispatch(updateSettings(settings))
+          return Rx.Observable.of(null)
+        })
+    })
     .do(() => store.dispatch(update({ serverConfigDone: true })))
     .mapTo({ type: 'SERVER_CONFIG_DONE' })
 

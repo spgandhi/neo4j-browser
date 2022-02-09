@@ -34,7 +34,7 @@ class CustomProgressBar extends Component<any, any> {
   }
 
   updateProgress(index: number) {
-    if (index === 6) return
+    if (index === this.loadingStep.length) return
     this.setState({
       now: this.loadingStep[index],
       text: this.props.data.loadingStepText
@@ -50,6 +50,7 @@ class CustomProgressBar extends Component<any, any> {
   render() {
     const { now, text } = this.state
     const { data, ...progressProps } = this.props
+    console.log(now)
     return (
       <Progress percent={now} {...progressProps} active inverted>
         <div

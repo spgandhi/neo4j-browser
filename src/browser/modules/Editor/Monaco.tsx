@@ -123,10 +123,10 @@ class Monaco extends React.Component<MonacoProps, MonacoState> {
   private isMultiLine = (): boolean =>
     (this.editor?.getModel()?.getLineCount() || 0) > 1
 
-  private updateGutterCharWidth = (dbName: string): void => {
+  private updateGutterCharWidth = (): void => {
     this.editor?.updateOptions({
-      lineNumbersMinChars:
-        dbName.length && !this.isMultiLine() ? dbName.length * 1.3 : 2
+      lineNumbersMinChars: 2
+      // dbName.length && !this.isMultiLine() ? dbName.length * 1.3 : 2
     })
   }
 
@@ -233,7 +233,9 @@ class Monaco extends React.Component<MonacoProps, MonacoState> {
 
     editor.setModelMarkers(model, this.getMonacoId(), [])
 
-    this.updateGutterCharWidth(this.props.useDb || '')
+    // this.updateGutterCharWidth(this.props.useDb || '')
+    this.updateGutterCharWidth()
+
     this.debouncedUpdateCode()
   }
 
@@ -323,8 +325,8 @@ class Monaco extends React.Component<MonacoProps, MonacoState> {
       language: 'cypher',
       lightbulb: { enabled: false },
       lineHeight: 23,
-      lineNumbers: (line: number) =>
-        this.isMultiLine() ? line.toString() : `${this.props.useDb || ''}$`,
+      lineNumbers: (line: number) => line.toString(),
+      // this.isMultiLine() ? line.toString() : `${this.props.useDb || ''}$`,
       links: false,
       minimap: { enabled: false },
       overviewRulerBorder: false,

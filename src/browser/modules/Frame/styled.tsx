@@ -178,14 +178,15 @@ export const StyledFrameCommand = styled.label<{ selectedDb: string | null }>`
   text-overflow: ellipsis;
   overflow: hidden;
   display: block;
-  &::before {
-    color: ${props => props.theme.promptText};
-    content: "${props => (props.selectedDb || '') + '$ '}";
-  }
   .disable-font-ligatures & {
     font-variant-ligatures: none !important;
   } 
 `
+
+// &::before {
+// color: ${props => props.theme.promptText};
+// content: "${props => (props.selectedDb || '') + '$ '}";
+// }
 
 export const ContentContainer = styled.div`
   height: 100%;

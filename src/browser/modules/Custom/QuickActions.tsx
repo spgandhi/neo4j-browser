@@ -9,17 +9,13 @@ import { CSSProperties } from 'styled-components'
 import AuraBanner from './AuraBanner'
 import { generateQueryWithComment, trackEvent } from './helpers'
 import { GlobalState } from 'shared/globalState'
-import {
-  getActiveConnection,
-  getActiveConnectionData
-} from 'shared/modules/connections/connectionsDuck'
-import demoDBConnectionSettings from './demoDBConnectionSettings'
+import { getUseDb } from 'shared/modules/connections/connectionsDuck'
+import dbSettings from './demoDBConnectionSettings'
 
 interface IProps {
   onQueryUpdate: any
   processQuery: (cmd: string) => void
-  activeConnection: any
-  activeConnectionName: any
+  activeDb: any
 }
 
 type IStyles = {
@@ -84,10 +80,10 @@ const QuickActions = (props: IProps) => {
     trackEvent('SAMPLE_QUERY_CLICK', properties)
     props.processQuery(generateQueryWithComment(query, comment))
   }
-  const activeConnectionIndex = demoDBConnectionSettings.findIndex(
-    db => db.id === props.activeConnectionName
+  const activeConnectionIndex = dbSettings.allowedDatabases.findIndex(
+    db => db.id === props.activeDb
   )
-  const db = demoDBConnectionSettings[activeConnectionIndex]
+  const db = dbSettings.allowedDatabases[activeConnectionIndex]
 
   if (!db) return null
   return (
@@ -180,8 +176,7 @@ const mapDispatchToProps = (_dispatch: any, ownProps: any) => {
 
 const mapStateToProps = (state: GlobalState) => {
   return {
-    activeConnection: getActiveConnectionData(state),
-    activeConnectionName: getActiveConnection(state)
+    activeDb: getUseDb(state)
   }
 }
 
