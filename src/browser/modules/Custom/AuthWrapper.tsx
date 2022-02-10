@@ -93,6 +93,9 @@ const AuthWrapper = (props: IProps) => {
   // Step 2: When serverConfig is done, set active DB
 
   const handleUseDb = (dbDetails: DatabaseItem) => {
+    trackEvent('SET_ACTIVE_DB', {
+      id: dbDetails.id
+    })
     props.executeCommand(`:use ${dbDetails.id}`)
   }
 
@@ -121,6 +124,9 @@ const AuthWrapper = (props: IProps) => {
         db => db.id === activeDb
       )
       if (dbDetails) {
+        trackEvent('SET_ACTIVE_DB_SUCCESS', {
+          id: dbDetails.id
+        })
         executeIitialQuery(dbDetails)
       }
     }
