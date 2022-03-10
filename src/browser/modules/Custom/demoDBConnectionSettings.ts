@@ -61,7 +61,7 @@ const allowedDatabases: DatabaseItem[] = [
     queries: [
       {
         id: '0',
-        text: 'Find the Directors of Tom Hanks Movies',
+        text: 'Find the people and their answers related to a question',
         graphValue: 'People Connected through Questions',
         description:
           'When people are connected through many steps, how do the JOINs look? Instead, visualizing these relationships in data can reveal useful insights, without complex queries',
@@ -69,7 +69,7 @@ const allowedDatabases: DatabaseItem[] = [
       },
       {
         id: '1',
-        text: 'Bacon Number with All the Steps',
+        text: 'Find all nodes related to the answers to a specific question',
         graphValue: 'Complexity Becomes Useful',
         description:
           'With many “foreign key” relationships, knowing the data structure is critical and specialized. …but is it necessary?',
@@ -77,14 +77,14 @@ const allowedDatabases: DatabaseItem[] = [
       },
       {
         id: '2',
-        text: 'Find the actor/directors with their movies',
+        text: 'List the tags by number of answers',
         description: 'Spreadsheets, software, or reports? Flatten the result.',
         query: `MATCH (tag:Tag)<-[:TAGGED]-(q:Question)<-[:ANSWERED]-(a:Answer)\nRETURN tag.name, sum(q.view_count) AS views, count(a) AS answers\nORDER BY answers DESC, views DESC`,
         graphValue: 'Gimme a Table'
       },
       {
         id: '3',
-        text: 'Find the actor/directors with their movies',
+        text: 'Find tags relationships through common questions.',
         description:
           'Better ways to understand the data by looking for intermediate relationships. Here, we look at the way tags relate to each other, by connecting any two that share a question.',
         query: `WITH ['neo4j', 'cypher', 'graph-databases'] AS excludeTags\nMATCH (tag1:Tag)<-[:TAGGED]-(q:Question)-[:TAGGED]->(tag2:Tag)\nWHERE tag1.name > tag2.name AND NOT tag1.name IN excludeTags AND NOT tag2.name IN excludeTags\nWITH tag1, tag2, count(q) AS questionCount ORDER BY questionCount DESC LIMIT 100\nRETURN tag1, tag2, apoc.create.vRelationship(tag1, 'RELATES_TO', {name: questionCount}, tag2) AS rel`,
@@ -98,27 +98,27 @@ const allowedDatabases: DatabaseItem[] = [
     queries: [
       {
         id: '0',
-        text: 'Find the Directors of Tom Hanks Movies',
+        text: 'Find software versions and dependencies',
         graphValue: 'Version Management Simplified',
-        description:
-          'Dependencies across applications will always be a graph. Sure, this can be shoehorned into a list or a rdb and when it must include machines on different versions?',
+        // description:
+        //   'Dependencies across applications will always be a graph. Sure, this can be shoehorned into a list or a rdb and when it must include machines on different versions?',
         query: `MATCH (s:Software)-[:VERSION]->(v)\nOPTIONAL MATCH (s)-[:DEPENDS_ON]->(dv)\nRETURN s, dv, v`
       },
       {
         id: '1',
-        text: 'Bacon Number with All the Steps',
-        graphValue: 'Network and Software for One Machine',
-        description:
-          'All the pieces needed for a single machine. How many spreadsheets does this avoid?',
+        text: 'Find all network and software used by a single machine',
+        // graphValue: 'Network and Software for One Machine',
+        // description:
+        // 'All the pieces needed for a single machine. How many spreadsheets does this avoid?',
         query: `MATCH net=(m:Machine {name: "DC1-RCK-1-3-M-12"})<-[]-(:Rack)-[:CONTAINS*2]-(:Router)\nMATCH soft=allShortestPaths((m)-[*1..3]-(:Software))\nRETURN net, soft`
       },
       {
         id: '2',
-        text: 'Datacenter Network Connectivity',
-        description:
-          '// Is this even possible with SQL without day(s) of frustration?',
-        query: `MATCH path = allShortestPaths( (:Rack)-[:HOLDS|ROUTES|CONNECTS*]-(:Router:Egress) )\nRETURN path`,
-        graphValue: 'Datacenter Network Connectivity'
+        text: 'Find the connections from machines to the internet.',
+        // description:
+        // '// Is this even possible with SQL without day(s) of frustration?',
+        query: `MATCH path = allShortestPaths( (:Rack)-[:HOLDS|ROUTES|CONNECTS*]-(:Router:Egress) )\nRETURN path`
+        // graphValue: 'Datacenter Network Connectivity'
       }
     ]
   }

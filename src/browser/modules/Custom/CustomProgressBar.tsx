@@ -50,7 +50,6 @@ class CustomProgressBar extends Component<any, any> {
   render() {
     const { now, text } = this.state
     const { data, ...progressProps } = this.props
-    console.log(now)
     return (
       <Progress percent={now} {...progressProps} active inverted>
         <div
