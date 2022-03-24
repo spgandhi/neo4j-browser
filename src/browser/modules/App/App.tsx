@@ -179,6 +179,8 @@ export function App(props: any) {
 
   const wrapperClassNames = codeFontLigatures ? '' : 'disable-font-ligatures'
 
+  const searchParams = new URLSearchParams(window.location.search)
+
   return (
     <ErrorBoundary>
       <AuthWrapper>
@@ -261,7 +263,9 @@ export function App(props: any) {
             <StyledApp>
               <StyledBody>
                 <ErrorBoundary>
-                  <QuickActions />
+                  {searchParams.get('showSidebar') !== 'false' && (
+                    <QuickActions />
+                  )}
                   {/* <Sidebar openDrawer={drawer} onNavClick={handleNavClick} /> */}
                 </ErrorBoundary>
                 <StyledMainWrapper id={MAIN_WRAPPER_DOM_ID}>

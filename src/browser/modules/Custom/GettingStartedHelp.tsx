@@ -3,6 +3,8 @@ import PlayIconCircle from './PlayIconCircle'
 import theme from './theme'
 
 function GettingStartedHelp() {
+  const searchParams = new URLSearchParams(window.location.search)
+
   return (
     <div
       style={{
@@ -27,21 +29,35 @@ function GettingStartedHelp() {
         <ol style={{ paddingLeft: 16 }}>
           <li style={{ marginBottom: 8 }}>
             <span style={{ display: 'inline-flex' }}>
-              <span>Click on "Run Query" ( </span>
-              <span
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  padding: '0 4px'
-                }}
-              >
-                <PlayIconCircle
-                  color={theme.colors.primary.DEFAULT}
-                  size={14}
-                />
-              </span>
-              <span> ) on one of the sample queries in the left sidebar</span>
+              {searchParams.get('showSidebar') == 'false' ? (
+                <>
+                  <span>
+                    Write the cypher query in the editor above and then click on
+                    the play icon to run the query.
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span>Click on "Run Query" ( </span>
+                  <span
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: '0 4px'
+                    }}
+                  >
+                    <PlayIconCircle
+                      color={theme.colors.primary.DEFAULT}
+                      size={14}
+                    />
+                  </span>
+                  <span>
+                    {' '}
+                    ) on one of the sample queries in the left sidebar.
+                  </span>
+                </>
+              )}
             </span>
           </li>
           <li style={{ marginBottom: 8 }}>

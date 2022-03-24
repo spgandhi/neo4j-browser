@@ -46,9 +46,13 @@ interface IProps {
 }
 
 const AuthWrapper = (props: IProps) => {
+  const searchParams = new URLSearchParams(window.location.search)
+
   const { queryRequests, isServerConfigDone, activeDb } = props
   const [isCredentialing, setIsCredentialing] = useState(true)
-  const [firstQueryMode, setFirstQueryMode] = useState(false)
+  const [firstQueryMode, setFirstQueryMode] = useState(
+    searchParams.get('firstQuery') !== 'false'
+  )
 
   // Step 1: Connect to the database
   useEffect(() => {
@@ -72,7 +76,6 @@ const AuthWrapper = (props: IProps) => {
     trackEvent('CONNECT_TO_DB', {
       id: details.id
     })
-    setFirstQueryMode(true)
     props.bus.self(CONNECT, details, (res: any) => {
       trackEvent('CONNECT_TO_DB_SUCCESS', {
         id: details.id,
@@ -115,7 +118,18 @@ const AuthWrapper = (props: IProps) => {
 
   useEffect(() => {
     if (isServerConfigDone) {
-      handleUseDb(dbSettings.allowedDatabases[0])
+      let db = dbSettings.allowedDatabases[0]
+
+      if (searchParams.get('usecase')) {
+        const urlParamDb = dbSettings.allowedDatabases.find(
+          db => db.id === searchParams.get('usecase')
+        )
+        if (urlParamDb) db = urlParamDb
+      }
+      console.log(db)
+      handleUseDb(db)
+
+      if (!firstQueryMode) readyForDisplay()
     }
   }, [isServerConfigDone])
 
@@ -133,6 +147,8 @@ const AuthWrapper = (props: IProps) => {
   }
 
   useEffect(() => {
+    if (searchParams.get('firstQuery') == 'false') return
+
     if (activeDb) {
       const dbDetails = dbSettings.allowedDatabases.find(
         db => db.id === activeDb
