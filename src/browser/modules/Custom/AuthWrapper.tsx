@@ -136,6 +136,7 @@ const AuthWrapper = (props: IProps) => {
   // Step 3: When activeDB is set, run the initial query
 
   const executeIitialQuery = (dbDetails: DatabaseItem) => {
+    console.log('executeIitialQuery')
     setFirstQueryMode(true)
     props.executeCommand(':clear')
     props.executeCommand(
