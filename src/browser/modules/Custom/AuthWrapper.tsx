@@ -90,6 +90,20 @@ const AuthWrapper = (props: IProps) => {
     })
   }
 
+  useEffect(() => {
+    if (window.parent !== self) {
+      window.parent.postMessage(
+        {
+          message: 'neo4j-test-drive',
+          data: {
+            queryRequests
+          }
+        },
+        '*'
+      )
+    }
+  }, [queryRequests])
+
   // Step 2: When serverConfig is done, set active DB
 
   const handleUseDb = (dbDetails: DatabaseItem) => {
