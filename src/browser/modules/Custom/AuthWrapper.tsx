@@ -158,7 +158,9 @@ const AuthWrapper = (props: IProps) => {
         trackEvent('SET_ACTIVE_DB_SUCCESS', {
           id: dbDetails.id
         })
-        executeIitialQuery(dbDetails)
+        setTimeout(() => {
+          executeIitialQuery(dbDetails)
+        }, 2000)
       }
     }
   }, [activeDb])
