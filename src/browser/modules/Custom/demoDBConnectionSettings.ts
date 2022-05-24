@@ -121,6 +121,11 @@ const allowedDatabases: DatabaseItem[] = [
         // graphValue: 'Datacenter Network Connectivity'
       }
     ]
+  },
+  {
+    id: 'stackoverflow',
+    title: 'Stack Overflow',
+    queries: []
   }
 ]
 

@@ -11,10 +11,7 @@ import {
   getUseDb,
   setActiveConnection
 } from 'shared/modules/connections/connectionsDuck'
-import {
-  getRemoteContentHostnameAllowlist,
-  isServerConfigDone
-} from 'shared/modules/dbMeta/dbMetaDuck'
+import { isServerConfigDone } from 'shared/modules/dbMeta/dbMetaDuck'
 import { getRequests } from 'shared/modules/requests/requestsDuck'
 import { OverlayElement } from './AppWrapper'
 import CustomProgressBar from './CustomProgressBar'
@@ -62,8 +59,8 @@ const AuthWrapper = (props: IProps) => {
 
     // Listen for message to change connection to another DB
     window.addEventListener('message', (event: any) => {
-      const allowedMessages = dbSettings.allowedDatabases.map(db => db.id)
-      if (allowedMessages.indexOf(event.data) > -1) {
+      const allowedDatabaseNames = dbSettings.allowedDatabases.map(db => db.id)
+      if (allowedDatabaseNames.indexOf(event.data) > -1) {
         const db = dbSettings.allowedDatabases.find(db => db.id === event.data)
         if (!db) return
         setIsCredentialing(true)
@@ -136,6 +133,8 @@ const AuthWrapper = (props: IProps) => {
   // Step 3: When activeDB is set, run the initial query
 
   const executeIitialQuery = (dbDetails: DatabaseItem) => {
+    if (dbDetails.queries.length === 0) return
+
     console.log('executeIitialQuery')
     setFirstQueryMode(true)
     props.executeCommand(':clear')
