@@ -86,16 +86,19 @@ export function getBodyAndStatusBarMessages(result: any, maxRows: any) {
       : ' ms.'
 
   let updateMessages = bolt.retrieveFormattedUpdateStatistics(result)
-  let streamMessage =
-    result.records.length > 0
-      ? `Returned records ${resultAvailableAfter} ms`
-      : `completed ${totalTimeString} ${streamMessageTail}`
+  let streamMessage = ''
+  // result.records.length > 0
+  //   ? `Returned records ${resultAvailableAfter} ms`
+  //   : `completed ${totalTimeString} ${streamMessageTail}`
 
   if (updateMessages && updateMessages.length > 0) {
     updateMessages = `${updateMessages[0].toUpperCase() +
       updateMessages.slice(1)}, `
   } else {
-    streamMessage = streamMessage[0].toUpperCase() + streamMessage.slice(1)
+    streamMessage =
+      streamMessage.length > 0
+        ? streamMessage[0].toUpperCase() + streamMessage.slice(1)
+        : ''
   }
 
   const systemUpdatesValue = get(result, 'summary.counters._systemUpdates')
